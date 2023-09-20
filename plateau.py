@@ -35,16 +35,18 @@ class Plateau :
 
     # Check each predicted possible move value on the board
     for i in predict : 
-      move = self.board[(i[0][0],i[1][0],i[2][0],i[3][0]),
-                  (i[0][1],i[1][1],i[2][1],i[3][1])]
+      # Gather the current value of each possible move
+      move = self.board[
+        (i[0][0],i[1][0],
+        i[2][0],i[3][0]),
+        (i[0][1],i[1][1]
+        ,i[2][1],i[3][1])
+        ]
+      # If the sum(move)==4 than the first player wins, for -4 than the second
       if (sum(move)==4) : return 1
       elif (sum(move)==-4) : return -1
 
     return 0
-
-
-
-
 
   def play(self,x,player) :
     i = self.width-1
@@ -73,6 +75,6 @@ class Plateau :
       elif turn==-1 : 
         turn = self.play(x,player2)
 
-    print("Puissance 4 winner is : ", self.has_won())
     self.show()
+    print("Puissance 4 winner is : ", self.has_won())
       
