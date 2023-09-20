@@ -25,7 +25,7 @@
 
 1. Implémenter une fonction qui calcule la liste de toutes les quadruplets de cases qui doivent être de la même couleur pour gagner : $\{((0,0),(0,1),(0,2),(0,3)),((0,1),(0,2),(0.3),(0.4))...\}$
 	- **Attention** : N'oubliez pas les diagonales !
-	- **Fonction** : `predict_possible_move(width, length, coord1, coord2)`
+	- **Fonction** : `find_winning_quadruplets(width, length, coord1, coord2)`
 2. Implémenter le moteur du jeu *(sous forme de classe de préférence)*. Des indications vous sont données à la fin de l'énoncé pour l'implémentation. Il doit comporter les éléments suivants : 
 - un tableau qui représente le plateau du jeu
 - Les fonctions : 
