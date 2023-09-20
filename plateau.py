@@ -9,87 +9,48 @@ class Plateau :
   def __init__(self, pl_width, pl_length, player1, player2) : 
     self.player1 = player1
     self.player2 = player2
-    self.plateau = np.zeros((pl_width,pl_length))
+    self.board = np.zeros((pl_width,pl_length))
     self.width = pl_width
     self.length = pl_length
 
+
+  #===============================
   # Affichage du Plateau
   def show(self) : 
-    print(self.plateau)
+    print("=============================")
+    print("Current state of the game")
+    print("=============================")
+    print(self.board)
 
 
   # Function for class manipulation 
   def reset(self) : 
-    self.plateau = np.zeros((self.width, self.length))
-    return False
+    self.board = np.zeros((self.width, self.length))
+    return
+
 
   def has_won(self) : 
+    # Predict possible moves on the board
+    predict = predict_winning_quadruplets(self.board)
 
-    # Add Coordinates present on the Plateau for both players
-    for i in range(self.width) : 
-      for j in range(self.length) : 
-        if self.plateau[i][j]==1 : 
-          self.player1.addCoordinate((i,j)) 
-        elif self.plateau[i][j]==-1 : 
-          self.player2.addCoordinate((i,j)) 
-    
-    # Possible move dictionnary for Player 1
-    Player1 = dict()
-    for i in self.player1.coordinate : 
-      if i not in Player1 :
-        Player1[i] = find_winning_quadruplets(self.width,self.length,i[0],i[1])
+    # Check each predicted possible move value on the board
+    for i in predict : 
+      move = self.board[(i[0][0],i[1][0],i[2][0],i[3][0]),
+                  (i[0][1],i[1][1],i[2][1],i[3][1])]
+      if (sum(move)==4) : return 1
+      elif (sum(move)==-4) : return -1
 
-    # Possible move dictionnary for Player 2
-    Player2 = dict()
-    for i in self.player2.coordinate : 
-      if i not in Player2 :
-        Player2[i] = find_winning_quadruplets(self.width,self.length,i[0],i[1])
-
-    # Generate empty list from dictionnary 
-    for i in self.player1.coordinate : 
-      for (k,_) in Player1.items() : 
-        for j in Player1[k] : 
-            if i in j:
-                j.remove(i)
-    
-    for i in self.player2.coordinate : 
-      for (k,_) in Player2.items() : 
-        for j in Player2[k] : 
-            if i in j : 
-                j.remove(i)
-
-    # Determine winner from empty list
-    p1_winner = 0
-    p2_winner = 0
-
-    for (k,_) in Player1.items() : 
-      for m in Player1[k]:
-      	if len(m)==0:
-		      p1_winner = 1
-		      break
-
-    for (k,_) in Player2.items() : 
-    	for m in Player2[k]:
-		    if len(m)==0 : 
-		      p2_winner = -1
-		      break
-
-    # If both win 
-    if p1_winner!=0 and p2_winner!=0 : 
-      return 2
-    else :
-      if p1_winner!=0 : 
-        return p1_winner
-      else : return p2_winner
-    
-    # If no one win
     return 0
+
+
+
+
 
   def play(self,x,player) :
     i = self.width-1
     while i>=0 : 
-      if self.plateau[i][x]==0 : 
-        self.plateau[i][x] = player.etiquette
+      if self.board[i][x]==0 : 
+        self.board[i][x] = player.etiquette
         break
       i-=1
 
@@ -97,41 +58,21 @@ class Plateau :
     else : return 1
 
   def is_finished(self) : 
-    return self.has_won()
+    return self.has_won()!=0
   
   def run(self, player1, player2) :
-    if (self.width<self.length) : 
-      x = random.randint(0,self.length)
-      turn = self.play(x,player2)
-      print(turn)
-      while not self.is_finished():
-        x = random.randint(0,self.length)
-        if turn==1 : 
-          turn = self.play(x,player1)
-        elif turn==-1 : 
-          turn = self.play(x,player2)
-    
-    elif (self.width==self.length) : 
-      x = random.randint(0,self.width-1)
-      turn = self.play(x,player2)
-      print(turn)
-      while not self.is_finished():
-        x = random.randint(0,self.width-1)
-        if turn==1 : 
-          turn = self.play(x,player1)
-        elif turn==-1 : 
-          turn = self.play(x,player2)
-    
-    else : 
-      x = random.randint(0,self.length-1)
-      turn = self.play(x,player2)
-      print(turn)
-      while not self.is_finished():
-        x = random.randint(0,self.length-1)
-        if turn==1 : 
-          turn = self.play(x,player1)
-        elif turn==-1 : 
-          turn = self.play(x,player2)
+    # Generate a random variable of x 
+    x = random.randint(0,self.length-1)
 
-    print("Winner is : ", self.has_won())
+    # Start the game with player 1 as first move
+    turn = self.play(x,player1)
+    while not self.is_finished():
+      x = random.randint(0,self.length-1)
+      if turn==1 : 
+        turn = self.play(x,player1)
+      elif turn==-1 : 
+        turn = self.play(x,player2)
+
+    print("Puissance 4 winner is : ", self.has_won())
+    self.show()
       
