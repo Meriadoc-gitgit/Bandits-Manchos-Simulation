@@ -1,4 +1,5 @@
 import numpy as np 
+import random
 from player import *
 from src import *
 
@@ -42,33 +43,47 @@ class Plateau :
     Player2 = dict()
     for i in self.player2.coordinate : 
       if i not in Player2 :
-        Player1[i] = predict_possible_move(self.width,self.length,i[0],i[1])
-
+        Player2[i] = predict_possible_move(self.width,self.length,i[0],i[1])
+    #print(Player1)
+    #print(Player2)
+    
     # Generate empty list from dictionnary 
     for i in self.player1.coordinate : 
-      for (_,v) in Player1.items : 
-        if i in v : 
-          v.remove(i)
+      for (_,v) in Player1.items() :
+        for j in v : 
+          #print(v)
+          if i in j : 
+            #print(v)
+            j.remove(i)
     
     for i in self.player2.coordinate : 
-      for (_,v) in Player2.items : 
-        if i in v : 
-          v.remove(i)
+      for (_,v) in Player2.items() : 
+        for j in v :
+          #print(v)
+          if i in j : 
+            #print(v)
+            j.remove(i)
+    print(Player1)
+    print(Player2)
 
     # Determine winner from empty list
     p1_winner = 0
     p2_winner = 0
 
-    for (_,v) in Player1.items : 
-      if len(v)==0 : 
-        p1_winner = 1
-        break
+    for (k,_) in Player1.items() : 
+      for m in Player1[k] : 
+        if len(m)==0 : 
+          p1_winner = 1
+          break
 
-    for (_,v) in Player2.items : 
-      if len(v)==0 : 
-        p2_winner = -1
-        break
+    for (k,_) in Player2.items() : 
+      for m in Player2[k] : 
+        if len(m)==0 : 
+          p2_winner = -1
+          break
 
+    print(p1_winner)
+    print(p2_winner)
     # If both win 
     if p1_winner!=0 and p2_winner!=0 : 
       return 2
@@ -94,5 +109,18 @@ class Plateau :
   def is_finished(self) : 
     return self.has_won()
   
-  #def run(self, player1, player2) :
+  def run(self, player1, player2) :
+    x = random.randint(0,self.width)
+    print(player1.etiquette)
+    print(player2.etiquette)
+    turn = self.play(x,player1)
+    while not self.is_finished() : 
+      x = random.randint(0,self.width)
+      if turn==1 : 
+        turn = self.play(x,player1)
+      else : turn = self.play(x,player2)
+    winner = self.has_won()
+    print("Winner : ",winner)
+    return
+
       
