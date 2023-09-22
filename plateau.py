@@ -74,7 +74,4 @@ class Plateau :
         turn = self.play(x,player1)
       elif turn==-1 : 
         turn = self.play(x,player2)
-
-    self.show()
-    print("Puissance 4 winner is : ", self.has_won())
       
