@@ -1,0 +1,151 @@
+{
+  "main": {
+    "id": "2518aa13a8f866d1",
+    "type": "split",
+    "children": [
+      {
+        "id": "814cf8e8ee2e4d3c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c9c09cdbff8ec4fb",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "3d9d06610264281d",
+    "type": "split",
+    "children": [
+      {
+        "id": "2ecbe88a10dac7ae",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "761e25c2afc3c3af",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "c52fbe28c2e154a1",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "eb47f48d90ccf63a",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "bb0096548316efc4",
+    "type": "split",
+    "children": [
+      {
+        "id": "d108e33b16bef78e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9efe153614d8dc6b",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "74bbe80978e9af95",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "754ee8f8342fe447",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "207b6e49c06bac89",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "c9c09cdbff8ec4fb",
+  "lastOpenFiles": [
+    "puissance-4-game.pdf",
+    "poisson_dist_nb_coups.jpg.md",
+    "puissance-4-game.md",
+    "readme.md",
+    "binomial_dist_nb_coups.jpg",
+    "projet-p4.pdf",
+    "poisson_dist_nb_coups_classified.jpg.md"
+  ]
+}
