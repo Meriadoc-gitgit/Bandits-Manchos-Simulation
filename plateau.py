@@ -75,3 +75,34 @@ class Plateau :
       elif turn==-1 : 
         turn = self.play(x,player2)
       
+
+# NEW
+# Partie 2 - Monte Carlo
+def Monte_Carlo_play(self, etat, joueur) : 
+  N = self.width*self.length
+  recompenses = 0 #moyenne des victoires par action 
+  L = np.zeros(self.length)
+
+  while i<N : 
+    action = random.randint(0,self.length)
+
+    # Simuler 1 joueur virtuel
+    if etat == 1 : joueur_virtuel = PLayer(-1)
+    else : joueur_virtuel = Player(1)
+
+    # Simuler un autre Plateau virtuel
+    plateau = Plateau(self)
+
+    while not self.is_finished() :
+      plateau.play(action, joueur)
+      plateau.run(joueur, joueur_virtuel)
+    
+    winner = plateau.has_won()
+    if winner==etat :  
+      for i in range(plateau.length) : 
+        for j in range(plateau.width) : 
+          if plateau.board[i][j] == etat : 
+            recompenses+=1
+      L[action] = recompenses
+    recompenses = 0
+  return np.argmin(L)
