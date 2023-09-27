@@ -86,6 +86,8 @@ class Plateau :
         turn = self.play(x,player2)
 
 
+  #===============================
+  # Monte-Carlo strategy
   def mc_strategy(self, etat, joueur) : 
     N = self.width*self.length
     recompenses = 0 #moyenne des victoires par action 
