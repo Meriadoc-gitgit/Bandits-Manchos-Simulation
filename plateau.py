@@ -94,6 +94,10 @@ class Plateau :
     L = np.zeros(self.length)
     i = 0
 
+    # Comparer l'état avec l'étiquette du joueur actuel en entrée
+    if joueur.etiquette!=etat : 
+      print("Error : Player mark must be the same as that of state")
+
     # Simuler un autre Plateau virtuel
     plateau = self.duplicata()
 
@@ -123,7 +127,32 @@ class Plateau :
         elif L[action] == 0 :
           L[action] = recompenses
       recompenses = 0
-      self.reset()
+      plateau.reset()
       i+=1
-    print(L)
-    return np.argmin(L)
+    #print("Array of number of turns before winning: ",L)
+    
+    if joueur.etiquette==1 : 
+      return (np.argmin(L),-1)
+    else : return (np.argmin(L),1)
+  
+
+
+
+  @staticmethod
+  # Monte-Carlo play applying Monte-Carlo strategy 
+  def mc_play(plt, player1, player2) : 
+    plateau = plt.duplicata()
+    plateau.reset()
+    move = plateau.play(plateau.mc_strategy(player1.etiquette,player1)[0],player1)
+    count = 0
+    while not plateau.is_finished() : 
+      if move == -1 : 
+        move = plateau.play(plateau.mc_strategy(player2.etiquette,player2)[0],player2)
+      else : 
+        move = plateau.play(plateau.mc_strategy(player1.etiquette,player1)[0],player1)
+        
+      count+=1
+
+    print("winner: ",plateau.has_won())
+    print("Number of turns: ",count)
+    plateau.show()
