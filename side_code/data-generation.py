@@ -21,7 +21,6 @@ for i in range(1000) :
     list_move.append(total_move)
     P.reset()
 
-
 # Initialiser les listes et dictionnaires nécessaires pour l'étude de la distribution des nombres de coups avant la victoire
 # LISTs
 list_move_unique = np.unique([i for (i,_) in list_move])
@@ -79,4 +78,4 @@ plt.ylabel("Fréquence d'apparition")
 plt.title("Distribution du nombre de coups avant une victoire")
 
 # Sauvegarder le graph sous forme PNG
-plt.savefig("poisson_dist_nb_coups_classified.jpg")
+plt.savefig("binomial_dist_nb_coups_classified.jpg")

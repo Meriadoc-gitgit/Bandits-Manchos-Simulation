@@ -12,6 +12,7 @@ class Plateau :
     self.board = np.zeros((pl_width,pl_length))
     self.width = pl_width
     self.length = pl_length
+    self.turn = 1
 
 
   #===============================
@@ -59,6 +60,9 @@ class Plateau :
     return 0
 
   def play(self,x,player) :
+    if self.turn != player.etiquette : 
+      print("Warning : The other player need to take his turn !")
+      return self.turn
     i = self.width-1
     while i>=0 : 
       if self.board[i][x]==0 : 
@@ -66,8 +70,8 @@ class Plateau :
         break
       i-=1
 
-    if player.etiquette == 1 : return -1
-    else : return 1
+    if player.etiquette == 1 : self.turn = -1; return -1
+    else : self.turn = -1; return 1
 
   def is_finished(self) : 
     return self.has_won()!=0
@@ -86,9 +90,14 @@ class Plateau :
         turn = self.play(x,player2)
 
 
+
+
+
+
   #===============================
   # Monte-Carlo strategy
   def mc_strategy(self, etat, joueur) : 
+    
     N = self.width*self.length
     L = np.zeros(self.length)
     i = 0
@@ -97,17 +106,21 @@ class Plateau :
     if joueur.etiquette!=etat : 
       print("Error : Player mark must be the same as that of state")
 
-    # Simuler un autre Plateau virtuel
-    plateau = self.duplicata()
+    # Possible que le Plateau actuelle est deja fini !
+
+    # Simuler 1 joueur virtuel
+    if etat == 1 : joueur_virtuel = Player(-1)
+    else : joueur_virtuel = Player(1)
+    #print("etiquette joueur vitruel: ",joueur_virtuel.etiquette)
 
     while i<N : 
+      
+      # Simuler un autre Plateau virtuel
+      plateau = self.duplicata()
+      
       recompenses = 0 #moyenne des victoires par action 
       action = random.randint(0,self.length-1)
       #print("action: ",action)
-
-      # Simuler 1 joueur virtuel
-      if etat == 1 : joueur_virtuel = Player(-1)
-      else : joueur_virtuel = Player(1)
       
       #while not self.is_finished() :
       plateau.play(action, joueur)
@@ -115,6 +128,7 @@ class Plateau :
 
       winner = plateau.has_won()
       #print("winner: ",winner)
+      
       
       if winner==etat :  
         for j in range(plateau.length-1) : 
@@ -126,16 +140,15 @@ class Plateau :
           L[action] = recompenses
         elif L[action] == 0 :
           L[action] = recompenses
+
       if i == N-1 : 
         plateau.show()
-      plateau.reset()
+      
+      #plateau.reset()
       i+=1
-    #print("Array of number of turns before winning: ",L)
-    
-    if joueur.etiquette==1 : 
-      return (np.argmin(L), -1, recompenses)
-    else : return (np.argmin(L), 1, recompenses)
-  
+    print("Array of number of turns before winning: ",L)
+    print("winner : ", plateau.has_won())
+    return (np.argmin(L), etat, 1) if plateau.has_won()==etat else (np.argmin(L), etat, 0)
 
 
 
@@ -157,7 +170,7 @@ class Plateau :
     print("winner: ",plateau.has_won())
     print("Number of turns: ",count)
     plateau.show()
-
+    return
 
 
   """
