@@ -40,3 +40,46 @@
 		- renvoie 1 ou -2 selon la victoire du joueur 1 ou 2, et 0 en cas de nul
 		- Supposons que chaque joueur est muni d'une fonction `play(plateau,joueur)` qui renvoie le coup à joueur pour ce joueur en lui précisant s'il est joueur 1 ou 2
 >**Note** : Utilisez ce codage des joueurs dans tous le projet : 1 pour le joueur 1 et -1 pour le joueur 2
+
+# Bandits-manchots
+>Afin de formaliser le probleme de l'exploitation/exploration, on prend souvent l'exemple des bandits manchots *(machine a sous), le jeu de hasard qu'on retrouve dans tout casinon qui se respecte :*
+>
+>- Pour une mise, on a le droit d'actionner un levier qui fait tourner des rouleaux
+>- en fonction de la combinaison obtenue sur les rouleaux, une recompense est attribue au joueur
+
+Supposons une machine a sous a $N$ leviers denotes par l'ensemble $\{1,2,...N\}$. 
+
+Chacun de ses leviers est une action possible parmi lesquelles le joueur doit choisir a chaque pas de temps
+- l'action choisir a l'instant $t$ sera appelee $a_t$ *(un entier entre $1$ et $N$)*
+
+Supposerons dans la suite que la recompense assochiee a chaque levier $i$ suit une distribution de Bernouilli de parametre $\mu_i$ 
+- avec une proba $\mu_i$ le joueur obtient une recompense de $1$
+- avec une proba $1-\mu_i$ le joueur obtient une recompense de $0$ 
+
+Cette recompense obtenue au temps $t$ lorsque le joueur joue sera notee $r_t$. 
+
+En notant $a_t$ l'action jouee au temps $t$, $r_t$ est donc une variable aleatoire qui suit une loi de Bernouilli de parametre $\mu^{a_t}$. 
+
+Supposons de plus que le rendement de chaque levier est stationnaire dans le temps, *ie. les $\mu_i$ sont constants tout au long de la partie*. 
+
+Pour le joueur : 
+- Le gain au bout de $T$ parties = somme des recompenses qu'il a obtenu pendant les $T$ premiere parties
+
+$$G_T = \sum^T_{t=0}r_t$$
+
+n.b. la recompense etant aleatoire, le gain $G_T$ est une variable aleatoire, tout comme $r_t$. 
+
+Pour maximiser ce gain : 
+- il faut que le joueur identifie : 
+	- le levier au rendement le plus eleve : $i^*=argmax_{i\in(1,...N)}\mu^i$
+	- le rendement associe : $\mu^*=\mu^{i^*}=max_{i\in(1,...N)}\mu^i$
+
+- Si le joueur joue un autre levier que $i^*$, il aura en moyenne un gain total inferieur au gain maximal qu'il peut esperer. 
+	- Ce gain maximal a un temps $T$ s'ecrit $G^*_T=\sum^T_{i=1}r^*_t$ *($r^*_t$ la recompense aleatoire tiree de la distribution de Bernoulli de parametre $\mu^*$)*
+- On appelle regret au temps $T$ la difference entre le gain maximal espere et le gain du joueur : $L_T = G^*=\sum^T_{t=1}r_t=\sum^T_{i=1}(r^*_t-r_t)$
+- **Objectif : MINIMISER LE REGRET**
+
+Note : 
+- $N_T(a)$ le nombre de fois ou l'action *(le levier)* a ete choisi jusqu'au temps $T$
+
+(to be continue)

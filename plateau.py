@@ -90,7 +90,6 @@ class Plateau :
   # Monte-Carlo strategy
   def mc_strategy(self, etat, joueur) : 
     N = self.width*self.length
-    recompenses = 0 #moyenne des victoires par action 
     L = np.zeros(self.length)
     i = 0
 
@@ -102,6 +101,7 @@ class Plateau :
     plateau = self.duplicata()
 
     while i<N : 
+      recompenses = 0 #moyenne des victoires par action 
       action = random.randint(0,self.length-1)
       #print("action: ",action)
 
@@ -122,18 +122,19 @@ class Plateau :
             if plateau.board[j][k] == etat : 
               recompenses+=1
         
-        if L[action] > recompenses : 
+        if L[action] > recompenses : # Garder seulement les meilleurs nombres de tours 
           L[action] = recompenses
         elif L[action] == 0 :
           L[action] = recompenses
-      recompenses = 0
+      if i == N-1 : 
+        plateau.show()
       plateau.reset()
       i+=1
     #print("Array of number of turns before winning: ",L)
     
     if joueur.etiquette==1 : 
-      return (np.argmin(L),-1)
-    else : return (np.argmin(L),1)
+      return (np.argmin(L), -1, recompenses)
+    else : return (np.argmin(L), 1, recompenses)
   
 
 
@@ -156,3 +157,18 @@ class Plateau :
     print("winner: ",plateau.has_won())
     print("Number of turns: ",count)
     plateau.show()
+
+
+
+  """
+  2 arguments generaux :
+  - la liste des recompenses moyennes estimees pour chaque levier (liste des mu^i)
+  - le nombre de fois ou chaque levier a ete joue (la liste des N(i))
+  """
+
+  def baseline(self, recompenses, tours) : 
+    return random.randint(0,self.length-1)
+
+  def greedy(self, recompenses, tours) : 
+    
+    return
