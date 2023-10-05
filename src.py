@@ -1,5 +1,6 @@
-import random as rnd 
+import random 
 
+# PREDICTING THE BOARD'S POSSIBLE WINNING QUADRUPLETS
 def predict_winning_quadruplets(board):
   rows = len(board)
   cols = len(board[0])
@@ -30,10 +31,11 @@ def predict_winning_quadruplets(board):
 
 
 
-# BANDITS-MANCHOTS
-def binary_gain(leviers, actions) : 
-  # rnd.random() rend un reel entre 0 et 1
-  return 1 if rnd.random()<=leviers[actions] else 0
+# BANDITS-MANCHOTS  
+def binary_gain(leviers, actions) : # rend le gain binaire corespondant au coup joue
+  # random.random() rend un reel entre 0 et 1
+  return 1 if random.random()<=leviers[actions] else 0
+
 
 
 

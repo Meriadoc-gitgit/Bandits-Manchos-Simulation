@@ -26,7 +26,7 @@ class Plateau :
   #===============================
   # Créer un duplicata du Plateau
   def duplicata(self) : 
-    plt = Plateau(self.width, self.length, self.player1, self.player2)
+    plt = Plateau(self.width, self.length, self.player1, self.player2, self.turn)
     for i in range(plt.length-1) : 
       for j in range(self.width-1) : 
         plt.board[i][j] = self.board[i][j]

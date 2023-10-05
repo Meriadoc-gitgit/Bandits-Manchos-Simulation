@@ -10,8 +10,8 @@ class Plateau :
   def __init__(self, width, length, player1, player2, turn=1) : 
     self.width = width
     self.length = length
-    self.player1 = Player(player1.etiquette)
-    self.player2 = Player(player2.etiquette)
+    self.player1 = Player(player1)
+    self.player2 = Player(player2)
 
     self.board = np.zeros((width, length))
     self.turn = turn # default turn = 1
@@ -33,15 +33,17 @@ class Plateau :
     print("====================================")
 
   def duplicata(self) : # Duplicate the current board
-    plateau = Plateau(self.width, self.length, self.player1, self.player2, self.turn)
-    plateau.board = self.board
-
+    plt = Plateau(self.width, self.length, self.player1.etiquette, self.player2.etiquette)
+    for i in range(plt.length-1) : 
+      for j in range(self.width-1) : 
+        plt.board[i][j] = self.board[i][j]
+    return plt
   
 
   # BOARD MANIPULATION FUNCTION
   def reset(self) : 
     self.board = np.zeros((self.width, self.length))
-    print("The game is successfully reset")
+    #print("The game is successfully reset")
     self.player1.reset()
     self.player2.reset()
 
@@ -70,16 +72,16 @@ class Plateau :
 
   def play(self,x,player) : 
     # Verify if the player has the right to process his turn
-    if self.turn != player.etiquette : 
+    if self.turn != player : 
       print("Warning : The other player need to take his turn !")
-      return self.turn
+      return
     
     # Place the button on the bottommost of the column
     i = self.width-1
     while i>=0 : 
       if not self.board[i][x] : 
-        self.board[i][x] = player.etiquette
-        if player.etiquette==1 : 
+        self.board[i][x] = player
+        if player==1 : 
           self.player1.addCoordinates((i,x))
           self.player1.total_move+=1
         else : 
@@ -99,7 +101,81 @@ class Plateau :
     # Generate auto-play game
     while not self.is_finished() : 
       x = random.randint(0,self.length-1)
-      if self.turn==1 : 
-        self.play(x, player1)
-      else : 
-        self.play(x, player2)
+      self.play(x, self.turn)
+
+
+
+
+
+  #=======================================
+  # APPLICATION DE LA STRATEGIE DE MONTE CARLO
+  #=======================================
+  # Supposons que les joueurs n'estiment les deplacements que durant leur tour
+
+  def MovesCounter(self, x, player) : 
+    N = self.width*self.length
+    i = 0
+    virtual = 1 if player==1 else -1
+    count = 0
+    plt = self.duplicata()
+
+    while i<N : 
+      plt = self.duplicata()
+
+      if player==1 : plt.run(player,virtual)
+      elif player==-1 : plt.run(virtual,player)
+
+      if plt.has_won()==player :
+        count+=1
+        
+      i+=1 
+      #print(count)
+    #plt.show()
+    return count/N
+
+
+  def MonteCarloStrategy(self,etat,player) : 
+    # Supposons que les joueurs n'estiment les deplacements que during leur tour
+    # Calculer le tour de l'autre joueur
+
+    if etat==0 : 
+      tmp = [self.MovesCounter(i, -1) for i in range(self.length)]
+      move = np.argmax(L)
+      self.play(move,self.turn)
+      
+    L = [self.MovesCounter(i, player) for i in range(self.length)]
+    print(L)
+    return np.argmax(L)
+      
+
+
+
+
+  #=======================================
+  # BANDITS-MANCHOTS
+  """
+  2 arguments generaux :
+  - la liste des recompenses moyennes estimees pour chaque levier (liste des mu^i)
+  - le nombre de fois ou chaque levier a ete joue (la liste des N(i))
+  """
+  #=======================================
+  def baseline(self, meanRecompenses, nbChosenLevier) : 
+    # Choisir a_t uniformement parmi toutes les actions possibles
+    return random.randint(0, self.length-1)
+
+  def greedy(self, meanRecompenses, nbChosenLevier) : 
+    return np.argmax(meanRecompenses)
+
+
+  def epsilon_greedy(self, meanRecompenses, nbChosenLevier) : 
+    # Fix a value of epsilon
+    epsilon = 0.4
+
+    rate = random.random()
+    return self.baseline(meanRecompenses, nbChosenLevier) if rate<=epsilon else self.greedy(meanRecompenses, nbChosenLevier)
+
+  def UCB(self, meanRecompenses, nbChosenLevier) : 
+    L = [meanRecompenses[i] + np.sqrt((2*np.log2(i))/nbChosenLevier[i]) for i in range(len(meanRecompenses))]
+    return np.argmax(L)
+
+  # Generer les datas avant !
