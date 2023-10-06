@@ -102,7 +102,7 @@ class BDMC(Plateau) :
   def UCB(self, estimations, nbChosenLevier, alpha=2) : 
       
     # Initialiser les variables necessaires pour l'implementation
-    N = 10000
+    N = 500
     L = [0] * N
     chosen = [0] * N
     D = dict()
