@@ -3,7 +3,41 @@ import numpy as np
 import random
 
 from player import *
-from src import *
+
+
+#=======================================================
+
+# PREDICTING THE BOARD'S POSSIBLE WINNING QUADRUPLETS
+def predict_winning_quadruplets(board):
+  rows = len(board)
+  cols = len(board[0])
+  quadruplets = []
+
+  # Check horizontal quadruplets
+  for row in range(rows):
+    for col in range(cols - 3):
+      quadruplets.append(((row, col), (row, col + 1), (row, col + 2), (row, col + 3)))
+
+  # Check vertical quadruplets
+  for row in range(rows - 3):
+    for col in range(cols):
+      quadruplets.append(((row, col), (row + 1, col), (row + 2, col), (row + 3, col)))
+
+  # Check diagonal (top-left to bottom-right) quadruplets
+  for row in range(rows - 3):
+    for col in range(cols - 3):
+      quadruplets.append(((row, col), (row + 1, col + 1), (row + 2, col + 2), (row + 3, col + 3)))
+
+  # Check diagonal (bottom-left to top-right) quadruplets
+  for row in range(3, rows):
+    for col in range(cols - 3):
+      quadruplets.append(((row, col), (row - 1, col + 1), (row - 2, col + 2), (row - 3, col + 3)))
+
+  return quadruplets
+
+
+
+#=======================================================
 
 class Plateau : 
   # INITIALISATIONS
@@ -102,80 +136,3 @@ class Plateau :
     while not self.is_finished() : 
       x = random.randint(0,self.length-1)
       self.play(x, self.turn)
-
-
-
-
-
-  #=======================================
-  # APPLICATION DE LA STRATEGIE DE MONTE CARLO
-  #=======================================
-  # Supposons que les joueurs n'estiment les deplacements que durant leur tour
-
-  def MovesCounter(self, x, player) : 
-    N = self.width*self.length
-    i = 0
-    virtual = 1 if player==1 else -1
-    count = 0
-    plt = self.duplicata()
-
-    while i<N : 
-      plt = self.duplicata()
-
-      if player==1 : plt.run(player,virtual)
-      elif player==-1 : plt.run(virtual,player)
-
-      if plt.has_won()==player :
-        count+=1
-        
-      i+=1 
-      #print(count)
-    #plt.show()
-    return count/N
-
-
-  def MonteCarloStrategy(self,etat,player) : 
-    # Supposons que les joueurs n'estiment les deplacements que during leur tour
-    # Calculer le tour de l'autre joueur
-
-    if etat==0 : 
-      tmp = [self.MovesCounter(i, -1) for i in range(self.length)]
-      move = np.argmax(L)
-      self.play(move,self.turn)
-      
-    L = [self.MovesCounter(i, player) for i in range(self.length)]
-    print(L)
-    return np.argmax(L)
-      
-
-
-
-
-  #=======================================
-  # BANDITS-MANCHOTS
-  """
-  2 arguments generaux :
-  - la liste des recompenses moyennes estimees pour chaque levier (liste des mu^i)
-  - le nombre de fois ou chaque levier a ete joue (la liste des N(i))
-  """
-  #=======================================
-  def baseline(self, meanRecompenses, nbChosenLevier) : 
-    # Choisir a_t uniformement parmi toutes les actions possibles
-    return random.randint(0, self.length-1)
-
-  def greedy(self, meanRecompenses, nbChosenLevier) : 
-    return np.argmax(meanRecompenses)
-
-
-  def epsilon_greedy(self, meanRecompenses, nbChosenLevier) : 
-    # Fix a value of epsilon
-    epsilon = 0.4
-
-    rate = random.random()
-    return self.baseline(meanRecompenses, nbChosenLevier) if rate<=epsilon else self.greedy(meanRecompenses, nbChosenLevier)
-
-  def UCB(self, meanRecompenses, nbChosenLevier) : 
-    L = [meanRecompenses[i] + np.sqrt((2*np.log2(i))/nbChosenLevier[i]) for i in range(len(meanRecompenses))]
-    return np.argmax(L)
-
-  # Generer les datas avant !
