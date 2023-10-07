@@ -41,7 +41,7 @@ class BDMC(Plateau) :
     :return: Le levier dont le rendement estimé est maximum après tous les tirages.
     :rtype: int
     """
-    nombre_de_tirages = 10000
+    nombre_de_tirages = 100
     nombre_de_fois_joues = [0] * len(estimations)
     recompenses_accumulees = [0] * len(estimations)
 
@@ -63,6 +63,8 @@ class BDMC(Plateau) :
       recompenses_accumulees[levier_selectionne] += recompense
 
     # Trouver le levier avec le rendement estimé maximum
+    for i in range(len(recompenses_accumulees)) : 
+      if nombre_de_fois_joues[i] == 0 : nombre_de_fois_joues[i] = 1
     levier_max = np.argmax([recompenses_accumulees[i]/nombre_de_fois_joues[i] for i in range(len(recompenses_accumulees))])
 
     #print(nombre_de_fois_joues)
@@ -75,7 +77,7 @@ class BDMC(Plateau) :
   def epsilon_greedy(self, estimations, nbChosenLevier, eps=0.4) : 
 
     # Initialiser les variables necessaires pour l'implementation
-    N = 500
+    N = 100
     L = dict()
 
     #=======================================
@@ -95,14 +97,14 @@ class BDMC(Plateau) :
 
     # MISE A JOUR DE L
     tmp = [v/N for (_,v) in L.items()]
-    print(tmp)
+    #print(tmp)
     return np.argmax(tmp)
 
     
   def UCB(self, estimations, nbChosenLevier, alpha=2) : 
       
     # Initialiser les variables necessaires pour l'implementation
-    N = 500
+    N = 100
     L = [0] * N
     chosen = [0] * N
     D = dict()

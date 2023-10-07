@@ -136,3 +136,32 @@ class Plateau :
     while not self.is_finished() : 
       x = random.randint(0,self.length-1)
       self.play(x, self.turn)
+
+
+
+  #=======================================================
+
+  # COMPTER LE TAUX DE REUSITTE DE CHAQUE CHOIX
+
+  def MovesCounter(self, x, player) : 
+    """Calculer le nombre de victoire au cours de N fois joue basant sur l'algorithme de strategie de Monte Carlo"""
+    N = 100
+    i = 0
+    virtual = 1 if player==1 else -1
+    count = 0
+    plt = self.duplicata()
+
+    while i<N : 
+      plt = self.duplicata()
+
+      if player==1 : plt.run(player,virtual)
+      elif player==-1 : plt.run(virtual,player)
+
+      if plt.has_won()==player :
+        count+=1
+        
+      i+=1 
+      #print(i)
+    #plt.show()
+    #print("ok")
+    return count/N
