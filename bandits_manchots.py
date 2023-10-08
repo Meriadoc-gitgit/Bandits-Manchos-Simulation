@@ -52,8 +52,6 @@ class BDMC(Plateau) :
       # Choisir un levier au hasard
       levier_selectionne = self.baseline(estimations,nbChosenLevier)
       #print(levier_selectionne)
-
-      #print(levier_selectionne)
           
       # Mettre à jour le nombre de fois joué pour ce levier
       nombre_de_fois_joues[levier_selectionne] += 1
@@ -65,6 +63,7 @@ class BDMC(Plateau) :
     # Trouver le levier avec le rendement estimé maximum
     for i in range(len(recompenses_accumulees)) : 
       if nombre_de_fois_joues[i] == 0 : nombre_de_fois_joues[i] = 1
+    
     levier_max = np.argmax([recompenses_accumulees[i]/nombre_de_fois_joues[i] for i in range(len(recompenses_accumulees))])
 
     #print(nombre_de_fois_joues)
