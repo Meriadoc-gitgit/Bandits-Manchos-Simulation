@@ -163,5 +163,5 @@ class Plateau :
       i+=1 
       #print(i)
     #plt.show()
-    #print("ok")
+    print("ok")
     return count/N

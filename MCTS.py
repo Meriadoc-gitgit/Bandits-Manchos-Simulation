@@ -89,7 +89,7 @@ class MCTS :
     # Plateau associe a ce MCTS
     player = self.player
     alpha = self.alpha
-    horizon = 1000 # Constant declaree au debut du projet
+    horizon = 10 # Constant declaree au debut du projet
 
     gr = BDMC(P, player)
 
@@ -153,7 +153,7 @@ class MCTS :
           P.play(i.id, player)
           i.visited = True 
           self.P = P
-          root_node.n+=self.simulation(i)[1]
+          root_node.n+=self.simulation(i).n
           L.append(i.id)     
           
       if P.has_won()==player :
@@ -164,7 +164,23 @@ class MCTS :
 
       if len(self.leviers) == 0 : break
 
-    return root_node.t, root_node.n
+    return root_node
 
-    #return root_node.t, root_node.n
+  def winning_rate_calculation(self, root_node) : 
+    if root_node.pere is None : 
+      child = root_node.fils 
+      len_child = len(child)
+      list_childT = []
+      
+      for i in child : 
+        if len_child==0 : 
+          T = [v for (v,_) in list_childT]
+          ID = [v for (_,v) in list_childT]
+          maximum = np.argmax(T)
+          return ID[maximum]
+
+        list_childT.append((i.t,i.id))
+        len_child-=1
+
+      
     
