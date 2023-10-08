@@ -1,3 +1,4 @@
+# Import necessary classes
 from plateau import *
 from monte_carlo import *
 import random

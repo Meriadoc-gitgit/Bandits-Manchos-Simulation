@@ -26,7 +26,7 @@ class Graphic :
   # DATA SIMULATION
   # ================================================
   @staticmethod
-  def simulation(P, player, alg, horizon, kstar=0, eps=0.4, alpha=2) : 
+  def simulation(P, player, alg, horizon, etat=0, kstar=0, eps=0.4, alpha=2) : 
     # ================================================
     # PRELIMINARY
     """
@@ -58,42 +58,42 @@ class Graphic :
     # If BASELINE is the chosen algorithmn
     if alg=="baseline" : 
       for t in range(horizon) : 
-          A_t = gr.baseline(estimations, [horizon*estimations[i] for i in range(len(estimations))])
-          r_k_t = gr.binary_gain(estimations, A_t)
-          rec[A_t]+=r_k_t
-          choix[t] = A_t
-          recompenses[t] = r_k_t
+        A_t = gr.baseline(estimations, [horizon*estimations[i] for i in range(len(estimations))])
+        r_k_t = gr.binary_gain(estimations, A_t)
+        rec[A_t]+=r_k_t
+        choix[t] = A_t
+        recompenses[t] = r_k_t
 
 
     # If GREEDY is the chosen algorithmn
     elif alg=="greedy" : 
       for t in range(horizon) : 
-          A_t = gr.greedy(estimations, [horizon*estimations[i] for i in range(len(estimations))])
-          #print(A_t)
-          r_k_t = gr.binary_gain(estimations, A_t)
-          rec[A_t]+=r_k_t
-          choix[t] = A_t
-          recompenses[t] = r_k_t
+        A_t = gr.greedy(estimations, [horizon*estimations[i] for i in range(len(estimations))])
+        #print(A_t)
+        r_k_t = gr.binary_gain(estimations, A_t)
+        rec[A_t]+=r_k_t
+        choix[t] = A_t
+        recompenses[t] = r_k_t
       
 
     # If EPS-GREEDY is the chosen algorithmn
     elif alg=="eps-greedy" : 
       for t in range(horizon) : 
-          A_t = gr.epsilon_greedy(estimations, [horizon*estimations[i] for i in range(len(estimations))], eps=eps)
-          #print(A_t)
-          r_k_t = gr.binary_gain(estimations, A_t)
-          rec[A_t]+=r_k_t
-          choix[t] = A_t
-          recompenses[t] = r_k_t
+        A_t = gr.epsilon_greedy(estimations, [horizon*estimations[i] for i in range(len(estimations))], eps=eps)
+        #print(A_t)
+        r_k_t = gr.binary_gain(estimations, A_t)
+        rec[A_t]+=r_k_t
+        choix[t] = A_t
+        recompenses[t] = r_k_t
 
     # If UCB is the chosen algorithmn
     elif alg=="UCB" : 
       for t in range(horizon) : 
-          A_t = gr.UCB(estimations, [horizon*estimations[i] for i in range(len(estimations))], alpha=alpha)
-          r_k_t = gr.binary_gain(estimations, A_t)
-          rec[A_t]+=r_k_t
-          choix[t] = A_t
-          recompenses[t] = r_k_t
+        A_t = gr.UCB(estimations, [horizon*estimations[i] for i in range(len(estimations))], alpha=alpha)
+        r_k_t = gr.binary_gain(estimations, A_t)
+        rec[A_t]+=r_k_t
+        choix[t] = A_t
+        recompenses[t] = r_k_t
     
     if alg=="UCB" : 
       pd.DataFrame(

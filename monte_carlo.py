@@ -15,10 +15,10 @@ class MonteCarlo(Plateau) :
     """
 
     if etat==0 : 
-      tmp = [self.MovesCounter(i, -1) for i in range(self.length)]
+      tmp = [self.MovesCounter(i, -1) for i in range(self.length)] 
       move = np.argmax(tmp)
       self.play(move,self.turn)
       
     L = [self.MovesCounter(i, player) for i in range(self.length)]
     #print(L)
-    return (np.argmax(L),L)
+    return np.argmax(L)
