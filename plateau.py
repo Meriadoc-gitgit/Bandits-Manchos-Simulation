@@ -145,7 +145,7 @@ class Plateau :
 
   def MovesCounter(self, x, player) : 
     """Calculer le nombre de victoire au cours de N fois joue basant sur l'algorithme de strategie de Monte Carlo"""
-    N = 100
+    N = 10
     i = 0
     virtual = 1 if player==1 else -1
     count = 0
@@ -163,5 +163,5 @@ class Plateau :
       i+=1 
       #print(i)
     #plt.show()
-    print("ok")
+    #print("ok")
     return count/N

@@ -59,14 +59,10 @@ class Node :
     for i in self.fils : 
       if i.id!=id : 
         s.add(i)
-        i +=1
+        j +=1
         if j==nb_elem-1 : 
           break
     self.fils = s
-
-
-
-
 
 
 
@@ -79,8 +75,6 @@ class MCTS :
     self.P = P 
     self.player = player
     self.alpha=alpha
-    self.leviers = []
-
 
 
   def liste_leviers(self,P) : 
@@ -100,11 +94,11 @@ class MCTS :
     estimations = [P.MovesCounter(i, gr.player) for i in range(P.length)]
     # Generer un nombre random de levier a choisir entre [1, P.length]
     nb_levier = np.random.randint(1, P.length)
-    print(nb_levier)
+    #print(nb_levier)
 
     # Generer un nombre nb_levier de fois l'algo UCB
     liste_levier = np.unique([gr.UCB(estimations=estimations, nbChosenLevier=[horizon*estimations[i] for i in range(len(estimations))]) for i in range(nb_levier)])
-    print(liste_levier)
+    #print(liste_levier)
 
     return liste_levier
 
@@ -126,7 +120,7 @@ class MCTS :
 
     # Generer une liste de leviers
     leviers = self.liste_leviers(P)
-    print("ok")
+    #print("ok")
 
     P.show()
 
@@ -136,7 +130,6 @@ class MCTS :
 
 
     if root_node.pere is None : 
-      self.leviers = leviers
       
       print("len root_node: ", len(root_node.fils), "id: ", root_node.id)
     else : print("len root_node: ", len(root_node.fils), "id: ", root_node.id, "pere: ", root_node.pere.id)
@@ -153,16 +146,25 @@ class MCTS :
           P.play(i.id, player)
           i.visited = True 
           self.P = P
-          root_node.n+=self.simulation(i).n
-          L.append(i.id)     
+          node = self.simulation(i)
+          root_node.t+=node.t
+          root_node.n+=node.n
           
-      if P.has_won()==player :
-        print("END") 
-        root_node.t+=1
-        self.leviers.removeChildNode(i.id)
-        self.P.reset()
-
-      if len(self.leviers) == 0 : break
+      else : 
+        if P.has_won()==player :
+          print("END") 
+          root_node.t = 1
+          root_node.n = 1
+          root_node.removeChildNode(i.id)
+          self.P.reset()
+        else : 
+          print("END") 
+          root_node.t = 0
+          root_node.n = 1
+          root_node.removeChildNode(i.id)
+          self.P.reset()
+      
+      if len(root_node.fils) == 0 and root_node.pere is None : break
 
     return root_node
 
@@ -173,10 +175,13 @@ class MCTS :
       list_childT = []
       
       for i in child : 
+
         if len_child==0 : 
+          
           T = [v for (v,_) in list_childT]
           ID = [v for (_,v) in list_childT]
           maximum = np.argmax(T)
+
           return ID[maximum]
 
         list_childT.append((i.t,i.id))
