@@ -154,7 +154,7 @@ class Graphic :
     mc = MonteCarlo(P)
     mustar = [mc.MovesCounter(i, player) for i in range(P.length)]
     recompense_accumulee = np.cumsum(recompense)
-    regret = mustar[kstar] * np.cumsum(np.ones_like(recompense)) - recompense_accumulee
+    regret = np.max(mustar) * np.cumsum(np.ones_like(recompense)) - recompense_accumulee
 
     plt.plot(regret, label=alg, color=color)
     plt.legend()
