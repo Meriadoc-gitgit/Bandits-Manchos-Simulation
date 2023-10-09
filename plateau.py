@@ -139,8 +139,17 @@ class Plateau :
 
 
 
-  #=======================================================
 
+  #=======================================================
+  # COMPTER LE TAUX DE PARTIE NULLE SUR LE PLATEAU
+
+  def NullPart(self) : 
+    """Calculer le taux de partie Null dans le plateau de jeu"""
+    return len([i for i in range(self.length) if np.sum(self.board[i])==0]) if self.is_finished() else 0
+
+
+
+  #=======================================================
   # COMPTER LE TAUX DE REUSITTE DE CHAQUE CHOIX
 
   def MovesCounter(self, x, player) : 
