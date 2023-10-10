@@ -35,7 +35,7 @@ class Node :
     else : self.label = label
     self.pere = pere 
     self.fils = fils
-    self.t = 0; self.n = 0; self.v = 0
+    self.t = 0; self.n = 0
     self.visited = False
 
   def addNode(self, new_node) : 
@@ -43,7 +43,7 @@ class Node :
       self.fils.add(new_node)
 
   def show(self) : 
-    L = "id: "+str(self.id)+" | t: "+str(self.t)+" | n: "+str(self.n)+" | v: "+str(self.v)
+    L = "id: "+str(self.id)+" | t: "+str(self.t)+" | n: "+str(self.n)
     
     for i in self.fils :
       if i.visited == False :
@@ -52,18 +52,6 @@ class Node :
       if i.fils==set() : break
     print(L)
 
-  def removeChildNode(self, id) : 
-    s = set()
-    j = 0
-    nb_elem = len(self.fils)
-    for i in self.fils : 
-      if i.id!=id : 
-        s.add(i)
-        j +=1
-        if j==nb_elem-1 : 
-          break
-    self.fils = s
-
 
 
 
@@ -71,13 +59,16 @@ class Node :
 
 class MCTS : 
 
+  LIMIT = 30
+
   def __init__(self, P, player, alpha=2) : 
     self.P = P 
     self.player = player
     self.alpha=alpha
+    self.ite = 0
 
 
-  def liste_leviers(self,P) : 
+  def liste_leviers(self,P, nb_fils_max=3) : 
     # Generer une liste de levier a jouer
 
     # Plateau associe a ce MCTS
@@ -92,12 +83,10 @@ class MCTS :
       P.play(move,P.turn)
 
     estimations = [P.MovesCounter(i, gr.player) for i in range(P.length)]
-    # Generer un nombre random de levier a choisir entre [1, P.length]
-    nb_levier = np.random.randint(1, P.length)
     #print(nb_levier)
 
     # Generer un nombre nb_levier de fois l'algo UCB
-    liste_levier = np.unique([gr.UCB(estimations=estimations, nbChosenLevier=[horizon*estimations[i] for i in range(len(estimations))]) for i in range(nb_levier)])
+    liste_levier = np.unique([gr.UCB(estimations=estimations, nbChosenLevier=[horizon*estimations[i] for i in range(len(estimations))]) for i in range(nb_fils_max)])
     #print(liste_levier)
 
     return liste_levier
@@ -112,80 +101,67 @@ class MCTS :
       current_node.addNode(Node(id=leviers[i], pere=current_node))
   
 
-  def simulation(self, root_node) : 
+  def simulation(self, root_node, nb_child=3, height=10) : 
+    """
+    Simuler un arbre UCT dont le nombre de noeuds fils est au max 3 par defaut, et l'hauteur de l'arbre est donc par defaut 10
+    """
+
+    if height==0 : 
+      nb_chosen_child = np.random.randint(1,nb_child+1)
+      liste_levier = self.liste_leviers(self.P, nb_chosen_child)
+      self.generate_childNode(liste_levier, root_node)
+
+    else : 
+      nb_chosen_child = np.random.randint(1,nb_child+1)
+      liste_levier = self.liste_leviers(self.P, nb_chosen_child)
+      self.generate_childNode(liste_levier, root_node)
+      L = []
+      for i in root_node.fils : 
+        if len(L)!=nb_child : 
+          L.append(i)
+          self.simulation(i, nb_chosen_child, height-1)
+      
+
+    return root_node
+
+
+  def exploitation(self, root_node, player=1) : 
+    L = []
+    if len(root_node.fils)==0 : 
+      if self.P.is_finished() : 
+        root_node.t+=1
+      root_node.n += 1
     
-    # Plateau associe a ce MCTS
-    P = self.P
-    player = self.player
-
-    # Generer une liste de leviers
-    leviers = self.liste_leviers(P)
-    #print("ok")
-
-    P.show()
-
-    # Generate root_node child
-    self.generate_childNode(leviers, root_node) 
-
-
-
-    if root_node.pere is None : 
-      
-      print("len root_node: ", len(root_node.fils), "id: ", root_node.id)
-    else : print("len root_node: ", len(root_node.fils), "id: ", root_node.id, "pere: ", root_node.pere.id)
-    print("child id: ",[i.id for i in root_node.fils])
-    child = root_node.fils
-      
-    for i in child :
-
-      if not P.is_finished() : 
-        if not i.visited : 
+    else : 
+      P = self.P
+      for i in root_node.fils : 
+        if len(L)!=len(root_node.fils) : 
+          L.append(i)
           if P.turn!=player : 
             move = np.random.randint(1,P.length-1)
             P.play(move,P.turn)
           P.play(i.id, player)
-          i.visited = True 
           self.P = P
-          node = self.simulation(i)
-          root_node.t+=node.t
-          root_node.n+=node.n
-          
-      else : 
-        if P.has_won()==player :
-          print("END") 
-          root_node.t = 1
-          root_node.n = 1
-          root_node.removeChildNode(i.id)
-          self.P.reset()
-        else : 
-          print("END") 
-          root_node.t = 0
-          root_node.n = 1
-          root_node.removeChildNode(i.id)
-          self.P.reset()
-      
-      if len(root_node.fils) == 0 and root_node.pere is None : break
-
+          if P.is_finished() : 
+            root_node.t += self.exploitation(i,player).t
+          root_node.n+=self.exploitation(i,player).n
+    
     return root_node
 
+
   def winning_rate_calculation(self, root_node) : 
-    if root_node.pere is None : 
-      child = root_node.fils 
-      len_child = len(child)
-      list_childT = []
-      
-      for i in child : 
+    L = []
+    r = []
+    for i in root_node.fils :
+      L.append(i)
+      if i.n==0 : 
+        r.append((i.t/1, i.id))
+      else : r.append((i.t/i.n, i.id))
+      if len(L)==len(root_node.fils) : break
+    
 
-        if len_child==0 : 
-          
-          T = [v for (v,_) in list_childT]
-          ID = [v for (_,v) in list_childT]
-          maximum = np.argmax(T)
+    taux = [k for (k,_) in r]
+    ID = [v for (_,v) in r]
 
-          return ID[maximum]
-
-        list_childT.append((i.t,i.id))
-        len_child-=1
-
-      
+    return ID[np.argmax(taux)]
     
